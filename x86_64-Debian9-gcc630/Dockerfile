@@ -1,5 +1,4 @@
 FROM debian:stretch
-ENV BUILDER_NAME=x86_64-stretch-gcc6
 #
 # Install dependencies.
 # "file" and "libssl-dev" are needed to install surf-build.
@@ -17,6 +16,13 @@ RUN apt-get update && \
         libssl-dev \
         linux-libc-dev \
     && apt-get clean
+#
+# Install dumb-init for correct operation as container PID 1
+#
+RUN curl -L --silent https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64.deb -o /tmp/dumb-init.deb \
+    && dpkg -i /tmp/dumb-init.deb \
+    && rm /tmp/dumb-init.deb
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 #
 # Add NodeSource repository key and install Node.js.
 # NOTE: There is no repository for "stretch", the documentation recommends to
@@ -44,4 +50,7 @@ WORKDIR /home/build
 #
 # Run the builder.
 #
-CMD surf-run -r https://github.com/Solo5/solo5 -- surf-build -n ${BUILDER_NAME} 
+# NOTE: The user-visible "builder name" is set here (via the argument to -n).
+#
+CMD ["surf-run", "-r", "https://github.com/Solo5/solo5", "--",
+     "surf-build", "-n", "x86_64-Debian9-gcc630"]
