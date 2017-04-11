@@ -52,5 +52,5 @@ WORKDIR /home/build
 #
 # NOTE: The user-visible "builder name" is set here (via the argument to -n).
 #
-CMD ["surf-run", "-r", "https://github.com/Solo5/solo5", "--",
+CMD ["surf-run", "-r", "https://github.com/Solo5/solo5", "--", \
      "surf-build", "-n", "x86_64-Debian9-gcc630"]
