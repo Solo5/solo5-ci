@@ -25,12 +25,10 @@ RUN curl -L --silent https://github.com/Yelp/dumb-init/releases/download/v1.2.0/
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 #
 # Add NodeSource repository key and install Node.js.
-# NOTE: There is no repository for "stretch", the documentation recommends to
-# install the version for "jessie".
 #
 RUN curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
     | apt-key add - && \
-    echo "deb https://deb.nodesource.com/node_6.x jessie main" \
+    echo "deb https://deb.nodesource.com/node_6.x stretch main" \
     | tee /etc/apt/sources.list.d/nodesource.list
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -qq -y \
