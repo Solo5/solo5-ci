@@ -3,6 +3,13 @@
 This repository contains the build recipes / instructions for the
 [surf-build](https://github.com/surf-build/surf) CI used for Solo5.
 
+**THIS DOCUMENT IS OUT OF DATE**
+
+The `x86_64-Debian9-gcc630` builder is now running full end-to-end tests using
+nested virtualization on KVM, with new CI infrastructure based on surf-build
+and [vm](https://github.com/roburio/vm). This repository will be updated to
+document the new setup in due course.
+
 | Builder name              | Recipe | Contact |
 | ------------              | ------ | ------- |
 | aarch64-Debian9-gcc630    | [Dockerfile](aarch64-Debian9-gcc630/Dockerfile) | @mato |
