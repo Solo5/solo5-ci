@@ -27,7 +27,7 @@ RUN apt-get update && \
 #
 RUN curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
     | apt-key add - && \
-    echo "deb https://deb.nodesource.com/node_6.x stretch main" \
+    echo "deb https://deb.nodesource.com/node_8.x stretch main" \
     | tee /etc/apt/sources.list.d/nodesource.list
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -qq -y \
@@ -98,7 +98,7 @@ ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 #
 RUN curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
     | apt-key add - && \
-    echo "deb https://deb.nodesource.com/node_6.x stretch main" \
+    echo "deb https://deb.nodesource.com/node_8.x stretch main" \
     | tee /etc/apt/sources.list.d/nodesource.list
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -qq -y \
@@ -110,9 +110,11 @@ RUN apt-get update && \
 #
 # Use --no-optional to prevent npm trying to install yet more useless
 # dependencies and verbosely spewing pages of errors when it fails.
+# --unsafe-perm is needed to work around meaningless npm failure with "EACCES"
+# when installing dugite.
 #
 COPY --from=builder /tmp/surf-build.tar.gz /tmp/surf-build.tar.gz
-RUN npm install -g --no-optional /tmp/surf-build.tar.gz && rm -f /tmp/surf-build.tar.gz
+RUN npm install -g --unsafe-perm --no-optional /tmp/surf-build.tar.gz && rm -f /tmp/surf-build.tar.gz
 
 # XXX Add LOCAL_GIT_DIRECTORY=/usr GIT_EXEC_PATH=/usr/lib/git-core to
 # environment to force dugite to use system Git instead of a random binary from
