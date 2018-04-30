@@ -120,6 +120,10 @@ RUN npm install -g --unsafe-perm --no-optional /tmp/surf-build.tar.gz && rm -f /
 # environment to force dugite to use system Git instead of a random binary from
 # the Internet?
 
+# Needed to get Git credentials passed through correctly when uploading the build log as a gist.
+RUN ln -s /usr/lib/node_modules/surf-build/node_modules/.bin/git-askpass-env \
+    /usr/local/bin/git-askpass-env
+
 #
 # Run the builder.
 #
