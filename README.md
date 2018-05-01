@@ -3,47 +3,25 @@
 This repository contains the build recipes / instructions for the
 [surf-build](https://github.com/surf-build/surf) CI used for Solo5.
 
-**THIS DOCUMENT IS OUT OF DATE**
+Our CI system has somewhat atypical requirements, since in order to run the
+end-to-end [tests](https://github.com/Solo5/solo5/tree/master/tests) we need
+access to hardware virtualization extensions. This is achieved by running on
+bare metal and using nested KVM (for x86\_64) or a suitably privileged Docker
+container (for aarch64).
 
-The `x86_64-Debian9-gcc630` builder is now running full end-to-end tests using
-nested virtualization on KVM, with new CI infrastructure based on surf-build
-and [vm](https://github.com/roburio/vm). This repository will be updated to
-document the new setup in due course.
+The "master" driver script can be found at
+[solo5-vm-build.sh](scripts/solo5-vm-build.sh), this relies on
+[surf-build](https://github.com/surf-build/surf) to watch the Solo5 repository
+for new or updated PRs and push build status to Github, with build logs
+uploaded as a Gist (click on the "Details" link beside each builder's status).
+The system further depends on [vm](https://github.com/roburio/vm) for the KVM
+management infrastructure.
 
-| Builder name              | Recipe | Contact |
-| ------------              | ------ | ------- |
-| aarch64-Debian9-gcc630    | [Dockerfile](aarch64-Debian9-gcc630/Dockerfile) | @mato |
-| amd64-FreeBSD11p8-clang38 | [custom](amd64-FreeBSD11p8-clang38/README.md) | @hannesm |
-| amd64-FreeBSD12-clang40   | custom | @hannesm |
-| x86\_64-Debian8-gcc492    | [Dockerfile](x86_64-Debian8-gcc492/Dockerfile) | @mato |
-| x86\_64-Debian9-gcc630    | [Dockerfile](x86_64-Debian9-gcc630/Dockerfile) | @mato |
+The following builders are currently running:
 
-## Docker-based builders
+| Builder name                  | Type/Notes | Contact |
+| ------------                  | ---- | ------- |
+| aarch64-Debian9-gcc630        | Docker [Dockerfile](any-Debian9-gcc630/Dockerfile) | @mato |
+| vm-amd64-FreeBSD11\_1-clang40 | Nested KVM | @mato |
+| vm-x86\_64-Debian9-gcc630     | Nested KVM | @mato |
 
-To build and push the image, from the directory with the Dockerfile:
-
-    $ docker build -t mato/solo5-builder:<name> .
-    $ docker push mato/solo5-builder:<name>
-
-To run a builder interactively:
-
-    $ docker run --rm -ti \
-        -e GITHUB_TOKEN=<REDACTED> \
-        mato/solo5-builder:<name>
-
-After a while you should see a message from `surf-run` indicating it 
-is watching the Solo5/solo5 repository.
-
-To run a builder non-interactively:
-
-    $ docker run --restart=always --name solo5-builder-<name> \
-        -d -e GITHUB_TOKEN=<REDACTED> \
-        mato/solo5-builder:<name>
-
-Note that the `GITHUB_TOKEN` value will be exposed in eg. `docker inspect`
-of the running container.
-
-## Adding more builders
-
-Open a PR on this repository, adding your build recipe and entry to the
-above table. Contact @mato for a suitable `GITHUB_TOKEN`.
