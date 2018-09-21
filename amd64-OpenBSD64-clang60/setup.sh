@@ -1,4 +1,6 @@
 #!/bin/sh -e
+sysctl kern.timecounter.hardware=tsc
+echo "kern.timecounter.hardware=tsc" > /etc/sysctl.conf
 rcctl set ntpd flags -s
 pkg_add bash coreutils git gmake node
 echo "permit persist setenv { -ENV PS1=\$DOAS_PS1 SSH_AUTH_SOCK } :wheel\npermit nopass keepenv root as root" > /etc/doas.conf
