@@ -80,6 +80,7 @@ RUN apt-get update && \
         gnupg \
         linux-libc-dev \
         iputils-ping \
+        libseccomp-dev \
         $([ `uname -m` = x86_64 ] && echo qemu-system-x86) \
     && apt-get clean
 #
