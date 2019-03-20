@@ -22,6 +22,6 @@ The following builders are currently running:
 | Builder name                  | Type/Notes | Contact |
 | ------------                  | ---- | ------- |
 | aarch64-Debian9-gcc630        | Docker [Dockerfile](any-Debian9-gcc630/Dockerfile) | @mato |
-| vm-amd64-FreeBSD11\_1-clang40 | Nested KVM | @mato |
+| vm-amd64-FreeBSD11\_2-clang60 | Nested KVM | @mato |
 | vm-x86\_64-Debian9-gcc630     | Nested KVM | @mato |
 
