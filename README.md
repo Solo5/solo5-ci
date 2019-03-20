@@ -19,9 +19,9 @@ management infrastructure.
 
 The following builders are currently running:
 
-| Builder name                  | Type/Notes | Contact |
-| ------------                  | ---- | ------- |
-| aarch64-Debian9-gcc630        | Docker [Dockerfile](any-Debian9-gcc630/Dockerfile) | @mato |
-| vm-amd64-FreeBSD11\_2-clang60 | Nested KVM | @mato |
-| vm-x86\_64-Debian9-gcc630     | Nested KVM | @mato |
+| Builder name                  | Type/Notes | Compiler | Contact |
+| ------------                  | ---------- | -------- | ------- |
+| 10-basic-x86\_64-Debian9      | Debian 9.8, Nested KVM | GCC 6.3.0 | @mato |
+| 11-basic-x86\_64-FreeBSD11    | FreeBSD 11.2, Nested KVM | Clang 6.0.0 | @mato |
+| 12-basic-aarch64-Debian9      | Debian 9.8, Docker ([Dockerfile](any-Debian9-gcc630/Dockerfile)) | GCC 6.3.0 | @mato |
 

@@ -245,9 +245,9 @@ do_docker_build()
 }
 
 
-( do_build vm-x86_64-Debian9-gcc630 ci-solo5-debian9 ) &
-( do_build vm-amd64-FreeBSD11_2-clang60 ci-solo5-freebsd11 ) &
-( do_docker_build aarch64-Debian9-gcc630 mato/solo5-builder:aarch64-Debian9-gcc630 rpi-builder.lan1 ) &
+( do_build 10-basic-x86_64-Debian9 ci-solo5-debian9 ) &
+( do_build 11-basic-x86_64-FreeBSD11 ci-solo5-freebsd11 ) &
+( do_docker_build 12-basic-aarch64-Debian9 mato/solo5-builder:aarch64-Debian9-gcc630 rpi-builder.lan1 ) &
 
 wait
 exit 0
