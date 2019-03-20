@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Build job driver for surf-build using "vm" for ephemeral VM management.
 #
@@ -244,10 +244,25 @@ do_docker_build()
     log "Done"
 }
 
-
+# First group that can run in parallel
+GROUP=()
 ( do_build 10-basic-x86_64-Debian9 ci-solo5-debian9 ) &
+GROUP+=($!)
 ( do_build 11-basic-x86_64-FreeBSD11 ci-solo5-freebsd11 ) &
+GROUP+=($!)
+
+# Don't care about this one (remote)
 ( do_docker_build 12-basic-aarch64-Debian9 mato/solo5-builder:aarch64-Debian9-gcc630 rpi-builder.lan1 ) &
 
+wait ${GROUP[*]}
+
+# Second group
+GROUP=()
+( do_build 13-MAYFAIL-basic-x86_64-Debian10 ci-solo5-debian10 ) &
+GROUP+=($!)
+
+wait ${GROUP[*]}
+
+# Wait for ALL builders to finish, including remote
 wait
 exit 0
