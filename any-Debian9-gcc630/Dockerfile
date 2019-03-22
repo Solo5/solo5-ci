@@ -6,7 +6,7 @@
 FROM debian:stretch AS builder
 #
 # Installs surf-build from Git, version is set here:
-ARG SURF_VERSION=2.0.0-beta.4
+ARG SURF_VERSION=2.0.0
 #
 # Install dependencies.
 # "file" is required(?) by various npm scripts.
@@ -27,7 +27,7 @@ RUN apt-get update && \
 #
 RUN curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
     | apt-key add - && \
-    echo "deb https://deb.nodesource.com/node_8.x stretch main" \
+    echo "deb https://deb.nodesource.com/node_10.x stretch main" \
     | tee /etc/apt/sources.list.d/nodesource.list
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -qq -y \
@@ -99,7 +99,7 @@ ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 #
 RUN curl --silent https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
     | apt-key add - && \
-    echo "deb https://deb.nodesource.com/node_8.x stretch main" \
+    echo "deb https://deb.nodesource.com/node_10.x stretch main" \
     | tee /etc/apt/sources.list.d/nodesource.list
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -qq -y \
