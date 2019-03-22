@@ -21,7 +21,7 @@ The following builders are currently running:
 
 | Builder name                  | OS/Type | Compiler | Contact | Notes |
 | ------------                  | ------- | -------- | ------- | ----- |
-| 00-info                       | (meta, used by CI system for overall progress)
+| 00-info                       |         |          |         | (meta, used by CI system for overall progress)
 | 10-basic-x86\_64-Debian9      | Debian 9.8, Nested KVM | GCC 6.3.0 | @mato | |
 | 11-basic-x86\_64-FreeBSD11    | FreeBSD 11.2, Nested KVM | Clang 6.0.0 | @mato | |
 | 12-basic-aarch64-Debian9      | Debian 9.8, Docker ([Dockerfile](any-Debian9-gcc630/Dockerfile)) | GCC 6.3.0 | @mato | |
