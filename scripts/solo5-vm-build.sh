@@ -57,6 +57,13 @@ EOM
     # Failure here is deliberately ignored
 }
 
+gh_meta_status()
+{
+    [ $# -ne 3 ] && die "gh_meta_status(): usage: CONTEXT STATE DESCRIPTION"
+
+    SURF_BUILD_NAME="$1" gh_status "$2" "$3"
+}
+
 gh_die()
 {
     gh_status error "#@"
@@ -80,9 +87,10 @@ sepa()
 
 do_build()
 {
-    [ $# -ne 2 ] && die "do_build(): usage: CONTEXT TEMPLATE"
+    [ $# -ne 3 ] && die "do_build(): usage: CONTEXT TEMPLATE BUILD_TYPE"
     SURF_BUILD_NAME="$1"
     vm_TEMPLATE="$2"
+    SURF_BUILD_TYPE="$3"
 
     #sepa
     log "New job: ${SURF_NWO}@${SURF_SHA1}"
@@ -128,6 +136,7 @@ do_build()
             SURF_REPO="${SURF_REPO}" \
             SURF_SHA1="${SURF_SHA1}" \
 	    SURF_RUN_TESTS="yes" \
+            SURF_BUILD_TYPE="${SURF_BUILD_TYPE}" \
             surf-build -n "${SURF_BUILD_NAME}" \|\| exit 2 \
             1>&3 2>&4
     job_STATUS=$?
@@ -164,10 +173,11 @@ do_build()
 
 do_docker_build()
 {
-    [ $# -ne 3 ] && die "do_docker_build(): usage: CONTEXT IMAGE BUILDHOST"
+    [ $# -ne 4 ] && die "do_docker_build(): usage: CONTEXT IMAGE BUILDHOST BUILD_TYPE"
     SURF_BUILD_NAME="$1"
     DOCKER_IMAGE="$2"
     BUILDHOST="$3"
+    SURF_BUILD_TYPE="$4"
 
     #sepa
     log "New job: ${SURF_NWO}@${SURF_SHA1}"
@@ -202,6 +212,7 @@ do_docker_build()
             -e SURF_REPO="${SURF_REPO}" \
             -e SURF_SHA1="${SURF_SHA1}" \
 	    -e SURF_RUN_TESTS="yes" \
+            -e SURF_BUILD_TYPE="${SURF_BUILD_TYPE}" \
 	    -e SURF_SUDO="sh" \
             -e EMAIL="Solo5-CI\ \<mato+solo5-ci@lucina.net\>" \
 	    --device /dev/net/tun \
@@ -244,25 +255,32 @@ do_docker_build()
     log "Done"
 }
 
+gh_meta_status 00-info pending "Builds in progress ($(date --utc))"
+
 # First group that can run in parallel
 GROUP=()
-( do_build 10-basic-x86_64-Debian9 ci-solo5-debian9 ) &
+( do_build 10-basic-x86_64-Debian9 ci-solo5-debian9 basic ) &
 GROUP+=($!)
-( do_build 11-basic-x86_64-FreeBSD11 ci-solo5-freebsd11 ) &
+( do_build 11-basic-x86_64-FreeBSD11 ci-solo5-freebsd11 basic ) &
 GROUP+=($!)
 
 # Don't care about this one (remote)
-( do_docker_build 12-basic-aarch64-Debian9 mato/solo5-builder:aarch64-Debian9-gcc630 rpi-builder.lan1 ) &
+( do_docker_build 12-basic-aarch64-Debian9 mato/solo5-builder:aarch64-Debian9-gcc630 rpi-builder.lan1 basic ) &
 
 wait ${GROUP[*]}
 
 # Second group
 GROUP=()
-( do_build 13-MAYFAIL-basic-x86_64-Debian10 ci-solo5-debian10 ) &
+( do_build 13-MAYFAIL-basic-x86_64-Debian10 ci-solo5-debian10 basic ) &
+GROUP+=($!)
+( do_build 20-e2e-x86_64-Debian10 ci-e2e-debian10 e2e ) &
 GROUP+=($!)
 
 wait ${GROUP[*]}
 
 # Wait for ALL builders to finish, including remote
 wait
+
+gh_meta_status 00-info success "All builders finished ($(date --utc))"
+
 exit 0
