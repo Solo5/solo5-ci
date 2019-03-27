@@ -128,7 +128,7 @@ do_build()
     # (surf-build exits with 255 if the job failed, hence the status-juggling)
     # (XXX: This cannot distinguish between "the surf-build invocation failed"
     # and "the surf-build job failed)
-    timeout 300 ssh ${vm_IP} env - \
+    timeout 300 ssh -v ${vm_IP} env - \
             HOME="/home/build" \
             PATH="/home/build/bin:/home/build/node_modules/.bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin" \
             TMPDIR="/home/build" \
@@ -207,7 +207,7 @@ do_docker_build()
     # and "the surf-build job failed)
     # XXX Check if "docker run" can interpose another status code here.
     # XXX EMAIL needed here otherwise git/dugite complain about unconfigured Git.
-    timeout 300 ssh ${BUILDHOST} docker run --rm \
+    timeout 300 ssh -v ${BUILDHOST} docker run --rm \
             -e GITHUB_TOKEN="${GITHUB_TOKEN}" \
             -e SURF_REPO="${SURF_REPO}" \
             -e SURF_SHA1="${SURF_SHA1}" \
@@ -273,6 +273,13 @@ wait ${GROUP[*]}
 GROUP=()
 ( do_build 13-MAYFAIL-basic-x86_64-Debian10 ci-solo5-debian10 basic ) &
 GROUP+=($!)
+( do_build 14-basic-x86_64-OpenBSD64 ci-solo5-openbsd64 basic ) &
+GROUP+=($!)
+
+wait ${GROUP[*]}
+
+# Third group
+GROUP=()
 ( do_build 20-e2e-x86_64-Debian10 ci-e2e-debian10 e2e ) &
 GROUP+=($!)
 
