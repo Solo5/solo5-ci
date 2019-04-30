@@ -271,7 +271,7 @@ wait ${GROUP[*]}
 
 # Second group
 GROUP=()
-( do_build 13-MAYFAIL-basic-x86_64-Debian10 ci-solo5-debian10 basic ) &
+( do_build 13-basic-x86_64-Debian10 ci-solo5-debian10 basic ) &
 GROUP+=($!)
 ( do_build 14-basic-x86_64-OpenBSD64 ci-solo5-openbsd64 basic ) &
 GROUP+=($!)

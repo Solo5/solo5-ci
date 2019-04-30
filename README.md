@@ -25,6 +25,6 @@ The following builders are currently running:
 | 10-basic-x86\_64-Debian9      | Debian 9.8, Nested KVM | GCC 6.3.0 | @mato | |
 | 11-basic-x86\_64-FreeBSD11    | FreeBSD 11.2, Nested KVM | Clang 6.0.0 | @mato | |
 | 12-basic-aarch64-Debian9      | Debian 9.8, Docker ([Dockerfile](any-Debian9-gcc630/Dockerfile)) | GCC 6.3.0 | @mato | |
-| 13-MAYFAIL-basic-x86\_64-Debian10      | Debian Buster/Testing, Nested KVM | GCC 8.3.0 | @mato | Experimental, failures should be ignored for now |
+| 13-basic-x86\_64-Debian10      | Debian Buster/Testing, Nested KVM | GCC 8.3.0 | @mato | |
 | 14-basic-x86\_64-OpenBSD64    | OpenBSD 6.4, Nested KVM | Clang 6.0.0 | @mato | |
 | 20-e2e-x86\_64-Debian10       | Debian Buster/Testing, Nested KVM | GCC 8.3.0 | @mato | Runs Mirage/Solo5 E2E tests using https://github.com/mato/e2e-mirage-solo5/
