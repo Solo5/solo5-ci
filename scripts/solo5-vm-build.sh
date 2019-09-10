@@ -259,21 +259,19 @@ gh_meta_status 00-info pending "Builds in progress ($(date --utc))"
 
 # First group that can run in parallel
 GROUP=()
-( do_build 10-basic-x86_64-Debian9 ci-solo5-debian9 basic ) &
+( do_build 10-basic-x86_64-Debian10 ci-solo5-debian10 basic ) &
 GROUP+=($!)
 ( do_build 11-basic-x86_64-FreeBSD11 ci-solo5-freebsd11 basic ) &
 GROUP+=($!)
 
 # Don't care about this one (remote)
-( do_docker_build 12-basic-aarch64-Debian9 mato/solo5-builder:aarch64-Debian9-gcc630 rpi-builder.lan1 basic ) &
+( do_docker_build 12-basic-aarch64-Debian10 mato/solo5-builder:aarch64-Debian10-gcc830 rpi-builder.lan1 basic ) &
 
 wait ${GROUP[*]}
 
 # Second group
 GROUP=()
-( do_build 13-basic-x86_64-Debian10 ci-solo5-debian10 basic ) &
-GROUP+=($!)
-( do_build 14-basic-x86_64-OpenBSD64 ci-solo5-openbsd64 basic ) &
+( do_build 13-basic-x86_64-OpenBSD64 ci-solo5-openbsd64 basic ) &
 GROUP+=($!)
 
 wait ${GROUP[*]}
