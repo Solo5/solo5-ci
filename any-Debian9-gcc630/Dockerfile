@@ -81,6 +81,7 @@ RUN apt-get update && \
         linux-libc-dev \
         iputils-ping \
         libseccomp-dev \
+        pkg-config \
         $([ `uname -m` = x86_64 ] && echo qemu-system-x86) \
     && apt-get clean
 #
