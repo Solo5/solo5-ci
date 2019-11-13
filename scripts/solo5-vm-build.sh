@@ -66,7 +66,7 @@ gh_meta_status()
 
 gh_die()
 {
-    gh_status error "#@"
+    gh_status error "$@"
     die "$@"
 }
 
@@ -91,6 +91,15 @@ do_build()
     SURF_BUILD_NAME="$1"
     vm_TEMPLATE="$2"
     SURF_BUILD_TYPE="$3"
+
+    case ${SURF_BUILD_NAME} in
+        *OpenBSD*)
+            SURF_SUDO=doas
+            ;;
+        *)
+            SURF_SUDO=sudo
+            ;;
+    esac
 
     #sepa
     log "New job: ${SURF_NWO}@${SURF_SHA1}"
@@ -135,8 +144,9 @@ do_build()
             GITHUB_TOKEN="${GITHUB_TOKEN}" \
             SURF_REPO="${SURF_REPO}" \
             SURF_SHA1="${SURF_SHA1}" \
-	    SURF_RUN_TESTS="yes" \
+            SURF_RUN_TESTS="yes" \
             SURF_BUILD_TYPE="${SURF_BUILD_TYPE}" \
+            SURF_SUDO="${SURF_SUDO}" \
             surf-build -n "${SURF_BUILD_NAME}" \|\| exit 2 \
             1>&3 2>&4
     job_STATUS=$?
@@ -178,6 +188,7 @@ do_docker_build()
     DOCKER_IMAGE="$2"
     BUILDHOST="$3"
     SURF_BUILD_TYPE="$4"
+    SURF_SUDO=
 
     #sepa
     log "New job: ${SURF_NWO}@${SURF_SHA1}"
@@ -211,15 +222,15 @@ do_docker_build()
             -e GITHUB_TOKEN="${GITHUB_TOKEN}" \
             -e SURF_REPO="${SURF_REPO}" \
             -e SURF_SHA1="${SURF_SHA1}" \
-	    -e SURF_RUN_TESTS="yes" \
+            -e SURF_RUN_TESTS="yes" \
             -e SURF_BUILD_TYPE="${SURF_BUILD_TYPE}" \
-	    -e SURF_SUDO="sh" \
+            -e SURF_SUDO="${SURF_SUDO}" \
             -e EMAIL="Solo5-CI\ \<mato+solo5-ci@lucina.net\>" \
-	    --device /dev/net/tun \
-	    --device /dev/kvm \
-	    --cap-add NET_ADMIN \
-	    --tmpfs /tmp:rw,exec \
-	    ${DOCKER_IMAGE} \
+            --device /dev/net/tun \
+            --device /dev/kvm \
+            --cap-add NET_ADMIN \
+            --tmpfs /tmp:rw,exec \
+            ${DOCKER_IMAGE} \
             surf-build -n "${SURF_BUILD_NAME}" \|\| exit 2 \
             1>&3 2>&4
     job_STATUS=$?
