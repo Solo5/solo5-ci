@@ -3,11 +3,22 @@
 As of 2019-03-21, surf-build 2.0.0 actually works "almost" out of the box on FreeBSD.
 
 Install the following system packages:
-- git
+- git-lite
 - gmake
 - curl
+- bash
+- coreutils
+- python2
 - node8
 - npm-node8
+
+If you get an error about the user `git_daemon` "dissapearing during update", run:
+
+```
+pwd_mkdb -p /etc/master.passwd
+```
+
+and re-run the `pkg install` command(s).  Don't forget to clear the pkg cache with `pkg clean -a` when done.
 
 As **a normal user**, run:
 
