@@ -17,7 +17,7 @@ prog_NAME=$(basename $0)
 
 log()
 {
-    echo "$(date -Iseconds) ${prog_NAME}[$$]:" \
+    echo "$(date -Iseconds) ${prog_NAME}[${SURF_SHA1:-$$}]:" \
         "(${SURF_BUILD_NAME:-none}) $@" 1>&2
 }
 
@@ -129,14 +129,6 @@ do_build()
     fi
 
     gh_status pending "Building on ${vm_ID}"
-    # This command can exit with the following status:
-    #   0: Success
-    #   2: The underlying surf-build job failed
-    # 124: Timed out
-    # 255: The SSH connection failed
-    # (surf-build exits with 255 if the job failed, hence the status-juggling)
-    # (XXX: This cannot distinguish between "the surf-build invocation failed"
-    # and "the surf-build job failed)
     timeout 300 ssh -v ${vm_IP} env - \
             HOME="/home/build" \
             PATH="/home/build/bin:/home/build/node_modules/.bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin" \
@@ -147,10 +139,15 @@ do_build()
             SURF_RUN_TESTS="yes" \
             SURF_BUILD_TYPE="${SURF_BUILD_TYPE}" \
             SURF_SUDO="${SURF_SUDO}" \
-            surf-build -n "${SURF_BUILD_NAME}" \|\| exit 2 \
+            surf-build -n "${SURF_BUILD_NAME}" \
+            '; E=$?; if [ $E -eq 255 ]; then exit 99; else exit $E; fi' \
             1>&3 2>&4
     job_STATUS=$?
-    # We only want to publish timeouts or SSH failures
+    # This command can exit with the following status:
+    #   0: Job succeeded
+    #  99: Job OR invocation failed (translated from 255 on remote end)
+    # 124: Timed out
+    # 255: The SSH connection failed
     case "${job_STATUS}" in
         124)
             gh_status error "Build timed out"
@@ -159,7 +156,31 @@ do_build()
         255)
             gh_status error "Connection to ${vm_ID} failed"
             ;;
+        0)
+            # The job succeeded. surf-build hopefully published a status,
+            # so there's nothing we need to do here.
+            ;;
+        99)
+            # The job failed OR surf-build died with some fatal error.
+            # In the latter case, it won't have published a status, which
+            # leaves the build stuck as "pending" on GitHub.
+            # The following is a half-hearted attempt to work around this
+            # stupidity by introspecting the output from the job log.
+            if [ -n "${log_FILE}" -a -f "${log_FILE}" ]; then
+                if tail -20 "${log_FILE}" \
+                    | egrep -q '^FAILURE: .+ failed: Status: [0-9]+$'; \
+                then
+                    # Job failed, status hopefully got published.
+                    :
+                else
+                    # Surf-build probably died, publish a status.
+                    gh_status error "Internal error"
+                fi
+            fi
+            ;;
         *)
+            # Catch-all in case of unexpected exit status
+            gh_status error "Internal error (${job_STATUS})"
             ;;
     esac
 
@@ -208,16 +229,10 @@ do_docker_build()
     fi
 
     gh_status pending "Building on ${BUILDHOST}"
-    # This command can exit with the following status:
-    #   0: Success
-    #   2: The underlying surf-build job failed
-    # 124: Timed out
-    # 255: The SSH connection failed
-    # (surf-build exits with 255 if the job failed, hence the status-juggling)
-    # (XXX: This cannot distinguish between "the surf-build invocation failed"
-    # and "the surf-build job failed)
+
     # XXX Check if "docker run" can interpose another status code here.
-    # XXX EMAIL needed here otherwise git/dugite complain about unconfigured Git.
+    # XXX EMAIL needed here otherwise git/dugite complain about unconfigured 
+    # XXX Git.
     timeout 300 ssh -v ${BUILDHOST} docker run --rm \
             -e GITHUB_TOKEN="${GITHUB_TOKEN}" \
             -e SURF_REPO="${SURF_REPO}" \
@@ -231,19 +246,48 @@ do_docker_build()
             --cap-add NET_ADMIN \
             --tmpfs /tmp:rw,exec \
             ${DOCKER_IMAGE} \
-            surf-build -n "${SURF_BUILD_NAME}" \|\| exit 2 \
+            surf-build -n "${SURF_BUILD_NAME}" \
+            '; E=$?; if [ $E -eq 255 ]; then exit 99; else exit $E; fi' \
             1>&3 2>&4
     job_STATUS=$?
-    # We only want to publish timeouts or SSH failures
+    # This command can exit with the following status:
+    #   0: Job succeeded
+    #  99: Job OR invocation failed (translated from 255 on remote end)
+    # 124: Timed out
+    # 255: The SSH connection failed
     case "${job_STATUS}" in
         124)
             gh_status error "Build timed out"
             job_TIMEOUT=1
             ;;
         255)
-            gh_status error "Connection to ${BUILDHOST} failed"
+            gh_status error "Connection to ${vm_ID} failed"
+            ;;
+        0)
+            # The job succeeded. surf-build hopefully published a status,
+            # so there's nothing we need to do here.
+            ;;
+        99)
+            # The job failed OR surf-build died with some fatal error.
+            # In the latter case, it won't have published a status, which
+            # leaves the build stuck as "pending" on GitHub.
+            # The following is a half-hearted attempt to work around this
+            # stupidity by introspecting the output from the job log.
+            if [ -n "${log_FILE}" -a -f "${log_FILE}" ]; then
+                if tail -20 "${log_FILE}" \
+                    | egrep -q '^FAILURE: .+ failed: Status: [0-9]+$'; \
+                then
+                    # Job failed, status hopefully got published.
+                    :
+                else
+                    # Surf-build probably died, publish a status.
+                    gh_status error "Internal error"
+                fi
+            fi
             ;;
         *)
+            # Catch-all in case of unexpected exit status
+            gh_status error "Internal error (${job_STATUS})"
             ;;
     esac
 
@@ -266,6 +310,7 @@ do_docker_build()
     log "Done"
 }
 
+log "Builds in progress"
 gh_meta_status 00-info pending "Builds in progress ($(date --utc))"
 
 # First group that can run in parallel
@@ -276,7 +321,7 @@ GROUP+=($!)
 GROUP+=($!)
 
 # Don't care about this one (remote)
-( do_docker_build 12-basic-aarch64-Debian10 mato/solo5-builder:aarch64-Debian10-gcc830 rpi-builder.lan1 basic ) &
+( do_docker_build 12-basic-aarch64-Debian10 mato/solo5-builder:aarch64-Debian10-gcc830 rpi-builder.ci.lan basic ) &
 
 wait ${GROUP[*]}
 
@@ -299,6 +344,7 @@ wait ${GROUP[*]}
 # Wait for ALL builders to finish, including remote
 wait
 
+log "All builders finished"
 gh_meta_status 00-info success "All builders finished ($(date --utc))"
 
 exit 0
