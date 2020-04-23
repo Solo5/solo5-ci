@@ -9,8 +9,8 @@ Install the following system packages:
 - bash
 - coreutils
 - python2
-- node8
-- npm-node8
+- node10
+- npm-node10
 
 If you get an error about the user `git_daemon` "dissapearing during update", run:
 
