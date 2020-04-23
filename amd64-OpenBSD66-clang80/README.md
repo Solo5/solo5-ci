@@ -1,6 +1,6 @@
-## Surf and solo5 on OpenBSD 6.4
+## Surf and solo5 on OpenBSD 6.6
 
-As of 2019-03-27, surf-build 2.0.0 actually works "almost" out of the box on OpenBSD.
+As of 2020-04-23, surf-build 2.0.0 actually works "almost" out of the box on OpenBSD.
 
 Install the following system packages:
 - curl
