@@ -22,9 +22,9 @@ The following builders are currently running:
 | Builder name                  | OS/Type | Compiler | Contact | Notes |
 | ------------                  | ------- | -------- | ------- | ----- |
 | 00-info                       |         |          |         | (meta, used by CI system for overall progress)
-| 10-basic-x86\_64-Debian10     | Debian 10.1, Nested KVM | GCC 8.3.0 | @mato | |
-| 11-basic-x86\_64-FreeBSD11    | FreeBSD 11.3, Nested KVM | Clang 8.0.0 | @mato | |
-| 12-basic-aarch64-Debian9      | Debian 9.8, Docker ([Dockerfile](any-Debian9-gcc630/Dockerfile)) | GCC 6.3.0 | @mato | |
+| 10-basic-x86\_64-Debian10     | Debian 10.x, Nested KVM | GCC 8.3.0 | @mato | |
+| 11-basic-x86\_64-FreeBSD11    | FreeBSD 11.x, Nested KVM | Clang 8.0.0 | @mato | |
+| 12-basic-aarch64-Debian10     | Debian 10.x, Docker ([Dockerfile](any-Debian10-gcc830/Dockerfile)) | GCC 8.3.0 | @mato | |
 | 13-basic-x86\_64-OpenBSD66    | OpenBSD 6.6, Nested KVM | Clang 8.0.1 | @mato | |
-| 14-basic-x86\_64-FreeBSD12    | FreeBSD 12.1, Nested KVM | Clang 8.0.1 | @mato | |
-| 20-e2e-x86\_64-Debian10       | Debian Buster/Testing, Nested KVM | GCC 8.3.0 | @mato | Runs Mirage/Solo5 E2E tests using https://github.com/mato/e2e-mirage-solo5/
+| 14-basic-x86\_64-FreeBSD12    | FreeBSD 12.x, Nested KVM | Clang 8.0.1 | @mato | |
+| 20-e2e-x86\_64-Debian10       | Debian 10.x, Nested KVM | GCC 8.3.0 | @mato | Runs Mirage/Solo5 E2E tests using https://github.com/mato/e2e-mirage-solo5/
