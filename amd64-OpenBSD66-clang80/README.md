@@ -18,6 +18,10 @@ npm install surf-build
 
 `dugite` will complain the the platform is not supported, you can ignore this. Otherwise the install should succeed.
 
+Additional notes for OpenBSD 6.7 and/or node 12.x:
+- you will need to run `npm install request`
+- various other bits of the surf-build dependency tree may fail, but as long as surf-build installs and runs with the script below, you're fine
+
 Place the following `surf-build` script into your `$PATH`:
 
 ```

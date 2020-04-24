@@ -336,6 +336,13 @@ wait ${GROUP[*]}
 
 # Third group
 GROUP=()
+( do_build 15-basic-x86_64-OpenBSD67 ci-solo5-openbsd67 basic ) &
+GROUP+=($!)
+
+wait ${GROUP[*]}
+
+# Run E2E on it's own as it's fairly CPU intensive
+GROUP=()
 ( do_build 20-e2e-x86_64-Debian10 ci-e2e-debian10 e2e ) &
 GROUP+=($!)
 
