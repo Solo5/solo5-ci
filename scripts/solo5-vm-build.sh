@@ -129,7 +129,7 @@ do_build()
     fi
 
     gh_status pending "Building on ${vm_ID}"
-    timeout 300 ssh -v ${vm_IP} env - \
+    timeout 420 ssh -v ${vm_IP} env - \
             HOME="/home/build" \
             PATH="/home/build/bin:/home/build/node_modules/.bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin" \
             TMPDIR="/home/build" \
@@ -233,7 +233,7 @@ do_docker_build()
     # XXX Check if "docker run" can interpose another status code here.
     # XXX EMAIL needed here otherwise git/dugite complain about unconfigured 
     # XXX Git.
-    timeout 300 ssh -v ${BUILDHOST} docker run --rm \
+    timeout 420 ssh -v ${BUILDHOST} docker run --rm \
             -e GITHUB_TOKEN="${GITHUB_TOKEN}" \
             -e SURF_REPO="${SURF_REPO}" \
             -e SURF_SHA1="${SURF_SHA1}" \
