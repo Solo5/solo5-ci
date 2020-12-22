@@ -28,4 +28,5 @@ The following builders are currently running:
 | 13-basic-x86\_64-OpenBSD66    | OpenBSD 6.6, Nested KVM | Clang 8.0.1 | @mato | |
 | 14-basic-x86\_64-FreeBSD12    | FreeBSD 12.x, Nested KVM | Clang 8.0.1 | @mato | |
 | 15-basic-x86\_64-OpenBSD67    | OpenBSD 6.7 beta, Nested KVM | Clang 8.0.1 | @mato | |
-| 20-e2e-x86\_64-Debian10       | Debian 10.x, Nested KVM | GCC 8.3.0 | @mato | Runs Mirage/Solo5 E2E tests using https://github.com/mato/e2e-mirage-solo5/
+| 16-basic-x86\_64-Debian11     | Debian bullseye/testing, Nested KVM | GCC 10.2.1 | @mato | |
+| ~~20-e2e-x86\_64-Debian10~~       | Debian 10.x, Nested KVM | GCC 8.3.0 | @mato | Runs Mirage/Solo5 E2E tests using https://github.com/mato/e2e-mirage-solo5/; temporarily disabled, needs some TLC

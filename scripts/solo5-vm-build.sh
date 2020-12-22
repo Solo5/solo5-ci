@@ -168,7 +168,7 @@ do_build()
             # stupidity by introspecting the output from the job log.
             if [ -n "${log_FILE}" -a -f "${log_FILE}" ]; then
                 if tail -20 "${log_FILE}" \
-                    | egrep -q '^FAILURE: .+ failed: Status: [0-9]+$'; \
+		    | egrep -q '^Failed with exit code: [0-9]+$'; \
                 then
                     # Job failed, status hopefully got published.
                     :
@@ -338,15 +338,18 @@ wait ${GROUP[*]}
 GROUP=()
 ( do_build 15-basic-x86_64-OpenBSD67 ci-solo5-openbsd67 basic ) &
 GROUP+=($!)
+( do_build 16-basic-x86_64-Debian11 ci-solo5-debian11 basic ) &
+GROUP+=($!)
 
 wait ${GROUP[*]}
 
 # Run E2E on it's own as it's fairly CPU intensive
-GROUP=()
-( do_build 20-e2e-x86_64-Debian10 ci-e2e-debian10 e2e ) &
-GROUP+=($!)
-
-wait ${GROUP[*]}
+# Temporarily disabled.
+# GROUP=()
+# ( do_build 20-e2e-x86_64-Debian10 ci-e2e-debian10 e2e ) &
+# GROUP+=($!)
+# 
+# wait ${GROUP[*]}
 
 # Wait for ALL builders to finish, including remote
 wait
